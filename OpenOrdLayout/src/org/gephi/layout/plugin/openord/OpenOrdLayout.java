@@ -210,9 +210,6 @@ public class OpenOrdLayout implements Layout, LongTask {
     @Override
     public void endAlgo() {
         running = false;
-        for (Worker w : workers) {
-            System.out.println("worker " + w.getId() + " " + w.random.nextFloat());
-        }
         combine = null;
     }
 
@@ -235,32 +232,32 @@ public class OpenOrdLayout implements Layout, LongTask {
     @Override
     public LayoutProperty[] getProperties() {
         List<LayoutProperty> properties = new ArrayList<LayoutProperty>();
-        final String DRL = "DrL";
+        final String OPENORD = "OpenOrd";
         final String RANDOM = "Random";
 
         try {
             properties.add(LayoutProperty.createProperty(
                     this, Float.class,
                     NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.edgecut.name"),
-                    DRL,
+                    OPENORD,
                     NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.edgecut.description"),
                     "getEdgeCut", "setEdgeCut"));
             properties.add(LayoutProperty.createProperty(
                     this, Integer.class,
                     NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.numthreads.name"),
-                    DRL,
+                    OPENORD,
                     NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.numthreads.description"),
                     "getNumThreads", "setNumThreads"));
             properties.add(LayoutProperty.createProperty(
                     this, Integer.class,
                     NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.numiterations.name"),
-                    DRL,
+                    OPENORD,
                     NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.numiterations.description"),
                     "getNumIterations", "setNumIterations"));
             properties.add(LayoutProperty.createProperty(
                     this, Boolean.class,
                     NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.resetposition.name"),
-                    DRL,
+                    OPENORD,
                     NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.resetposition.description"),
                     "isResetPosition", "setResetPosition"));
             properties.add(LayoutProperty.createProperty(
