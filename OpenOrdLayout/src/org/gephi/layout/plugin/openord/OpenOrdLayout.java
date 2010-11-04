@@ -62,6 +62,7 @@ public class OpenOrdLayout implements Layout, LongTask {
     private boolean running = true;
     private ProgressTicket progressTicket;
     //Settings
+    private Params param;
     private float edgeCut;
     private int numThreads;
     private long randSeed;
@@ -88,10 +89,17 @@ public class OpenOrdLayout implements Layout, LongTask {
         randSeed = r.nextLong();
         running = true;
         realTime = 0.2f;
+        param = Params.DEFAULT;
     }
 
     @Override
     public void initAlgo() {
+        //Verify param
+        if (param.getIterationsSum() != 1f) {
+            throw new RuntimeException("The sum of the time for each stage must be equal to 1");
+        }
+
+        //Get graph
         graph = graphModel.getHierarchicalUndirectedGraphVisible();
         graph.readLock();
         int numNodes = graph.getNodeCount();
@@ -186,7 +194,7 @@ public class OpenOrdLayout implements Layout, LongTask {
         control.setEdgeCut(edgeCut);
         control.setRealParm(realTime);
         control.setProgressTicket(progressTicket);
-        control.initParams(Params.DEFAULT, numIterations);
+        control.initParams(param, numIterations);
         control.setNumNodes(numNodes);
         control.setHighestSimilarity(highestSimilarity);
 
@@ -277,6 +285,7 @@ public class OpenOrdLayout implements Layout, LongTask {
     public LayoutProperty[] getProperties() {
         List<LayoutProperty> properties = new ArrayList<LayoutProperty>();
         final String OPENORD = "OpenOrd";
+        final String STAGE = "Stages";
 
         try {
             properties.add(LayoutProperty.createProperty(
@@ -309,6 +318,36 @@ public class OpenOrdLayout implements Layout, LongTask {
                     OPENORD,
                     NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.seed.description"),
                     "getRandSeed", "setRandSeed"));
+            properties.add(LayoutProperty.createProperty(
+                    this, Integer.class,
+                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.stage.liquid.name"),
+                    STAGE,
+                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.stage.liquid.description"),
+                    "getLiquidStage", "setLiquidStage"));
+            properties.add(LayoutProperty.createProperty(
+                    this, Integer.class,
+                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.stage.expansion.name"),
+                    STAGE,
+                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.stage.expansion.description"),
+                    "getExpansionStage", "setExpansionStage"));
+            properties.add(LayoutProperty.createProperty(
+                    this, Integer.class,
+                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.stage.cooldown.name"),
+                    STAGE,
+                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.stage.cooldown.description"),
+                    "getCooldownStage", "setCooldownStage"));
+            properties.add(LayoutProperty.createProperty(
+                    this, Integer.class,
+                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.stage.crunch.name"),
+                    STAGE,
+                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.stage.crunch.description"),
+                    "getCrunchStage", "setCrunchStage"));
+            properties.add(LayoutProperty.createProperty(
+                    this, Integer.class,
+                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.stage.simmer.name"),
+                    STAGE,
+                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.stage.simmer.description"),
+                    "getSimmerStage", "setSimmerStage"));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -365,6 +404,56 @@ public class OpenOrdLayout implements Layout, LongTask {
         realTime = Math.min(1f, realTime);
         realTime = Math.max(0, realTime);
         this.realTime = realTime;
+    }
+
+    public Integer getLiquidStage() {
+        return param.getLiquid().getIterationsPercentage();
+    }
+
+    public Integer getExpansionStage() {
+        return param.getExpansion().getIterationsPercentage();
+    }
+
+    public Integer getCooldownStage() {
+        return param.getCooldown().getIterationsPercentage();
+    }
+
+    public Integer getCrunchStage() {
+        return param.getCrunch().getIterationsPercentage();
+    }
+
+    public Integer getSimmerStage() {
+        return param.getSimmer().getIterationsPercentage();
+    }
+
+    public void setLiquidStage(Integer value) {
+        int v = Math.min(100, value);
+        v = Math.max(0, v);
+        param.getLiquid().setIterations(v / 100f);
+    }
+
+    public void setExpansionStage(Integer value) {
+        int v = Math.min(100, value);
+        v = Math.max(0, v);
+        param.getExpansion().setIterations(v / 100f);
+    }
+
+    public void setCooldownStage(Integer value) {
+        int v = Math.min(100, value);
+        v = Math.max(0, v);
+        param.getCooldown().setIterations(v / 100f);
+    }
+
+    public void setCrunchStage(Integer value) {
+        int v = Math.min(100, value);
+        v = Math.max(0, v);
+        param.getCrunch().setIterations(v / 100f);
+    }
+
+    public void setSimmerStage(Integer value) {
+        int v = Math.min(100, value);
+        v = Math.max(0, v);
+        param.getSimmer().setIterations(v / 100f);
     }
 
     @Override

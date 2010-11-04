@@ -108,12 +108,16 @@ public enum Params {
         return simmer;
     }
 
+    public float getIterationsSum() {
+        return liquid.iterations + expansion.iterations + cooldown.iterations + crunch.iterations + simmer.iterations;
+    }
+
     public static class Stage {
 
-        private final float iterations;
-        private final float temperature;
-        private final float attraction;
-        private final float dampingMult;
+        private float iterations;
+        private float temperature;
+        private float attraction;
+        private float dampingMult;
 
         Stage(float iterations, float temperature, float attraction, float dampingMult) {
             this.iterations = iterations;
@@ -138,8 +142,16 @@ public enum Params {
             return (int) (iterations * totalIterations);
         }
 
+        public int getIterationsPercentage() {
+            return (int) (iterations * 100f);
+        }
+
         public float getTemperature() {
             return temperature;
+        }
+
+        public void setIterations(float iterations) {
+            this.iterations = iterations;
         }
     }
 }
