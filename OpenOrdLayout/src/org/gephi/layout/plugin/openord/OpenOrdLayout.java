@@ -65,7 +65,6 @@ public class OpenOrdLayout implements Layout, LongTask {
     private float edgeCut;
     private int numThreads;
     private long randSeed;
-    private boolean resetPosition;
     private int numIterations;
     private float realTime;
     //Layout
@@ -87,7 +86,6 @@ public class OpenOrdLayout implements Layout, LongTask {
         numThreads = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
         Random r = new Random();
         randSeed = r.nextLong();
-        resetPosition = true;
         running = true;
         realTime = 0.9f;
     }
@@ -142,12 +140,41 @@ public class OpenOrdLayout implements Layout, LongTask {
         graph.readUnlock();
 
         //Reset position
-        if (resetPosition) {
+        boolean someFixed = false;
+        for (int i = 0; i < nodes.length; i++) {
+            Node n = nodes[i];
+            if (!n.fixed) {
+                n.x = 0;
+                n.y = 0;
+            } else {
+                someFixed = true;
+            }
+        }
+
+        //Recenter fixed nodes and rescale to fit into grid
+        if (someFixed) {
+            float minX = Float.POSITIVE_INFINITY;
+            float maxX = Float.NEGATIVE_INFINITY;
+            float minY = Float.POSITIVE_INFINITY;
+            float maxY = Float.NEGATIVE_INFINITY;
             for (int i = 0; i < nodes.length; i++) {
                 Node n = nodes[i];
-                if (!n.fixed) {
-                    n.x = 0;
-                    n.y = 0;
+                if (n.fixed) {
+                    minX = Math.min(minX, n.x);
+                    maxX = Math.max(maxX, n.x);
+                    minY = Math.min(minY, n.y);
+                    maxY = Math.max(maxY, n.y);
+                }
+            }
+            float shiftX = minX + (maxX - minX) / 2f;
+            float shiftY = minY + (maxY - minY) / 2f;
+            float ratio = Math.min(DensityGrid.getViewSize() / (maxX - minX), DensityGrid.getViewSize() / (maxY - minY));
+            ratio = Math.min(1f, ratio);
+            for (int i = 0; i < nodes.length; i++) {
+                Node n = nodes[i];
+                if (n.fixed) {
+                    n.x = (float) (n.x - shiftX) * ratio;
+                    n.y = (float) (n.y - shiftY) * ratio;
                 }
             }
         }
@@ -195,17 +222,16 @@ public class OpenOrdLayout implements Layout, LongTask {
         }
 
         //Add real nodes
-        if (!resetPosition) {
-            for (int i = 0; i < nodes.length; i++) {
-                Node n = nodes[i];
-                if (n.fixed) {
-                    for (int j = 0; j < workers.length; j++) {
-                        Worker w = workers[j];
-                        w.getDensityGrid().add(n, w.isFineDensity());
-                    }
+        for (int i = 0; i < nodes.length; i++) {
+            Node n = nodes[i];
+            if (n.fixed) {
+                for (int j = 0; j < workers.length; j++) {
+                    Worker w = workers[j];
+                    w.getDensityGrid().add(n, w.isFineDensity());
                 }
             }
         }
+
 
         running = true;
         firstIteration = true;
@@ -252,7 +278,6 @@ public class OpenOrdLayout implements Layout, LongTask {
         List<LayoutProperty> properties = new ArrayList<LayoutProperty>();
         final String OPENORD = "OpenOrd";
         final String RANDOM = "Random";
-        final String REALTIME = "Real-Time";
 
         try {
             properties.add(LayoutProperty.createProperty(
@@ -274,12 +299,6 @@ public class OpenOrdLayout implements Layout, LongTask {
                     NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.numiterations.description"),
                     "getNumIterations", "setNumIterations"));
             properties.add(LayoutProperty.createProperty(
-                    this, Boolean.class,
-                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.resetposition.name"),
-                    OPENORD,
-                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.resetposition.description"),
-                    "isResetPosition", "setResetPosition"));
-            properties.add(LayoutProperty.createProperty(
                     this, Long.class,
                     NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.seed.name"),
                     RANDOM,
@@ -288,7 +307,7 @@ public class OpenOrdLayout implements Layout, LongTask {
             properties.add(LayoutProperty.createProperty(
                     this, Float.class,
                     NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.realtime.name"),
-                    REALTIME,
+                    OPENORD,
                     NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.realtime.description"),
                     "getRealTime", "setRealTime"));
 
@@ -324,14 +343,6 @@ public class OpenOrdLayout implements Layout, LongTask {
 
     public void setRandSeed(Long randSeed) {
         this.randSeed = randSeed;
-    }
-
-    public boolean isResetPosition() {
-        return resetPosition;
-    }
-
-    public void setResetPosition(Boolean resetPosition) {
-        this.resetPosition = resetPosition;
     }
 
     public void setRunning(Boolean running) {

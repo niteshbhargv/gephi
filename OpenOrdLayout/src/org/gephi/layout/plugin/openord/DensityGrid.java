@@ -40,11 +40,11 @@ import java.util.ArrayDeque;
  */
 public class DensityGrid implements Cloneable {
 
-    private final int GRID_SIZE = 1000;         // size of Density grid
-    private final float VIEW_SIZE = 4000;       // actual physical size of layout plane
-    private final int RADIUS = 10;              // radius for density fall-off:
-    private final int HALF_VIEW = 2000;
-    private final float VIEW_TO_GRID = 0.25f;
+    private static final int GRID_SIZE = 1000;         // size of Density grid
+    private static final float VIEW_SIZE = 4000;       // actual physical size of layout plane
+    private static final int RADIUS = 10;              // radius for density fall-off:
+    private static final int HALF_VIEW = 2000;
+    private static final float VIEW_TO_GRID = 0.25f;
     private float[][] density;
     private float[][] fallOff;
     private ArrayDeque<Node>[][] bins;
@@ -196,6 +196,10 @@ public class DensityGrid implements Cloneable {
             bins[yGrid][xGrid] = deque;
         }
         deque.addLast(n);
+    }
+
+    public static float getViewSize() {
+        return VIEW_SIZE - (RADIUS / 0.25f) * 4f;
     }
 
     /*@Override
