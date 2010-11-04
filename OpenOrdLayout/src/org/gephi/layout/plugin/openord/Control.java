@@ -98,7 +98,7 @@ public class Control {
         } else {
             realIterations = (int) (realParm * fullCompIters);
         }
-        System.out.println("Real iterations "+realIterations);
+        System.out.println("Real iterations " + realIterations);
 
         if (realIterations > 0) {
             realFixed = true;

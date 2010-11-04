@@ -277,7 +277,6 @@ public class OpenOrdLayout implements Layout, LongTask {
     public LayoutProperty[] getProperties() {
         List<LayoutProperty> properties = new ArrayList<LayoutProperty>();
         final String OPENORD = "OpenOrd";
-        final String RANDOM = "Random";
 
         try {
             properties.add(LayoutProperty.createProperty(
@@ -299,17 +298,17 @@ public class OpenOrdLayout implements Layout, LongTask {
                     NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.numiterations.description"),
                     "getNumIterations", "setNumIterations"));
             properties.add(LayoutProperty.createProperty(
-                    this, Long.class,
-                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.seed.name"),
-                    RANDOM,
-                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.seed.description"),
-                    "getRandSeed", "setRandSeed"));
-            properties.add(LayoutProperty.createProperty(
                     this, Float.class,
                     NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.realtime.name"),
                     OPENORD,
                     NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.realtime.description"),
                     "getRealTime", "setRealTime"));
+            properties.add(LayoutProperty.createProperty(
+                    this, Long.class,
+                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.seed.name"),
+                    OPENORD,
+                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.seed.description"),
+                    "getRandSeed", "setRandSeed"));
 
         } catch (Exception e) {
             e.printStackTrace();
