@@ -55,6 +55,7 @@ public class Node implements Cloneable {
     @Override
     protected Node clone() {
         Node clone = new Node(id);
+        clone.fixed = fixed;
         clone.energy = energy;
         clone.x = x;
         clone.y = y;

@@ -199,7 +199,7 @@ public class DensityGrid implements Cloneable {
     }
 
     public static float getViewSize() {
-        return VIEW_SIZE - (RADIUS / 0.25f) * 4f;
+        return (VIEW_SIZE * 0.8f) - (RADIUS / 0.25f) * 2f;
     }
 
     /*@Override

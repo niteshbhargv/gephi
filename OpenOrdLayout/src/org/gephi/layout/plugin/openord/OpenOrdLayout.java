@@ -87,7 +87,7 @@ public class OpenOrdLayout implements Layout, LongTask {
         Random r = new Random();
         randSeed = r.nextLong();
         running = true;
-        realTime = 0.9f;
+        realTime = 0.2f;
     }
 
     @Override
