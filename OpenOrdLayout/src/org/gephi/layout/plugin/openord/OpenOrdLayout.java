@@ -67,6 +67,7 @@ public class OpenOrdLayout implements Layout, LongTask {
     private long randSeed;
     private boolean resetPosition;
     private int numIterations;
+    private float realTime;
     //Layout
     private Worker[] workers;
     private Combine combine;
@@ -88,6 +89,7 @@ public class OpenOrdLayout implements Layout, LongTask {
         randSeed = r.nextLong();
         resetPosition = true;
         running = true;
+        realTime = 0.9f;
     }
 
     @Override
@@ -139,12 +141,14 @@ public class OpenOrdLayout implements Layout, LongTask {
         }
         graph.readUnlock();
 
-        //Randomize position
+        //Reset position
         if (resetPosition) {
             for (int i = 0; i < nodes.length; i++) {
                 Node n = nodes[i];
-                n.x = 0;
-                n.y = 0;
+                if (!n.fixed) {
+                    n.x = 0;
+                    n.y = 0;
+                }
             }
         }
 
@@ -153,7 +157,7 @@ public class OpenOrdLayout implements Layout, LongTask {
         combine = new Combine(this);
         barrier = new CyclicBarrier(numThreads, combine);
         control.setEdgeCut(edgeCut);
-        control.setRealParm(1);
+        control.setRealParm(realTime);
         control.setProgressTicket(progressTicket);
         control.initParams(Params.DEFAULT, numIterations);
         control.setNumNodes(numNodes);
@@ -189,6 +193,20 @@ public class OpenOrdLayout implements Layout, LongTask {
             w.setPositions(nodesCopy);
             w.setNeighbors(neighborsCopy);
         }
+
+        //Add real nodes
+        if (!resetPosition) {
+            for (int i = 0; i < nodes.length; i++) {
+                Node n = nodes[i];
+                if (n.fixed) {
+                    for (int j = 0; j < workers.length; j++) {
+                        Worker w = workers[j];
+                        w.getDensityGrid().add(n, w.isFineDensity());
+                    }
+                }
+            }
+        }
+
         running = true;
         firstIteration = true;
     }
@@ -234,6 +252,7 @@ public class OpenOrdLayout implements Layout, LongTask {
         List<LayoutProperty> properties = new ArrayList<LayoutProperty>();
         final String OPENORD = "OpenOrd";
         final String RANDOM = "Random";
+        final String REALTIME = "Real-Time";
 
         try {
             properties.add(LayoutProperty.createProperty(
@@ -266,6 +285,12 @@ public class OpenOrdLayout implements Layout, LongTask {
                     RANDOM,
                     NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.seed.description"),
                     "getRandSeed", "setRandSeed"));
+            properties.add(LayoutProperty.createProperty(
+                    this, Float.class,
+                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.realtime.name"),
+                    REALTIME,
+                    NbBundle.getMessage(OpenOrdLayout.class, "OpenOrd.properties.realtime.description"),
+                    "getRealTime", "setRealTime"));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -320,6 +345,16 @@ public class OpenOrdLayout implements Layout, LongTask {
     public void setNumIterations(Integer numIterations) {
         numIterations = Math.max(100, numIterations);
         this.numIterations = numIterations;
+    }
+
+    public Float getRealTime() {
+        return realTime;
+    }
+
+    public void setRealTime(Float realTime) {
+        realTime = Math.min(1f, realTime);
+        realTime = Math.max(0, realTime);
+        this.realTime = realTime;
     }
 
     @Override

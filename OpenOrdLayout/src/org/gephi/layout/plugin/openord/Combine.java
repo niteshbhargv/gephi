@@ -69,6 +69,13 @@ public class Combine implements Runnable {
             }
         }
 
+        //Unfix positions if necessary
+        if (!control.isRealFixed()) {
+            for (Node n : positions) {
+                n.fixed = false;
+            }
+        }
+
         //Combine density
         for (Worker w : workers) {
             DensityGrid densityGrid = w.getDensityGrid();

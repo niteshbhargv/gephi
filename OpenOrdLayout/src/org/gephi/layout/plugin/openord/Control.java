@@ -55,7 +55,7 @@ public class Control {
     private boolean fineDensity;
     //Vars
     private float edgeCut;
-    private int realParm;
+    private float realParm;
     //Exec
     private long startTime;
     private long stopTime;
@@ -98,6 +98,7 @@ public class Control {
         } else {
             realIterations = (int) (realParm * fullCompIters);
         }
+        System.out.println("Real iterations "+realIterations);
 
         if (realIterations > 0) {
             realFixed = true;
@@ -296,6 +297,10 @@ public class Control {
         return true;
     }
 
+    public boolean isRealFixed() {
+        return realFixed;
+    }
+
     public float getHighestSimilarity() {
         return highestSimilarity;
     }
@@ -312,7 +317,7 @@ public class Control {
         this.edgeCut = edgeCut;
     }
 
-    public void setRealParm(int realParm) {
+    public void setRealParm(float realParm) {
         this.realParm = realParm;
     }
 
