@@ -96,7 +96,8 @@ public class OpenOrdLayout implements Layout, LongTask {
     public void initAlgo() {
         //Verify param
         if (param.getIterationsSum() != 1f) {
-            throw new RuntimeException("The sum of the time for each stage must be equal to 1");
+            param = Params.DEFAULT;
+            //throw new RuntimeException("The sum of the time for each stage must be equal to 1");
         }
 
         //Get graph
