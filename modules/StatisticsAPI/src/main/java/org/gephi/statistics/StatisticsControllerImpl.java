@@ -55,7 +55,7 @@ import org.gephi.dynamic.api.DynamicModel;
 import org.gephi.graph.api.Graph;
 import org.gephi.graph.api.GraphController;
 import org.gephi.graph.api.GraphModel;
-import org.gephi.graph.api.HierarchicalGraph;
+//import org.gephi.graph.api.HierarchicalGraph;
 import org.gephi.project.api.ProjectController;
 import org.gephi.utils.longtask.spi.LongTask;
 import org.gephi.utils.longtask.api.LongTaskExecutor;
@@ -149,7 +149,7 @@ public class StatisticsControllerImpl implements StatisticsController {
             executeDynamic((DynamicStatistics) statistics, null);
         } else {
             GraphController graphController = Lookup.getDefault().lookup(GraphController.class);
-            GraphModel graphModel = graphController.getModel();
+            GraphModel graphModel = graphController.getGraphModel();
             AttributeModel attributeModel = Lookup.getDefault().lookup(AttributeController.class).getModel();
             statistics.execute(graphModel, attributeModel);
             model.addReport(statistics);
@@ -158,7 +158,7 @@ public class StatisticsControllerImpl implements StatisticsController {
 
     private void executeDynamic(DynamicStatistics statistics, DynamicLongTask dynamicLongTask) {
         GraphController graphController = Lookup.getDefault().lookup(GraphController.class);
-        GraphModel graphModel = graphController.getModel();
+        GraphModel graphModel = graphController.getGraphModel();
         AttributeController attributeController = Lookup.getDefault().lookup(AttributeController.class);
         DynamicController dynamicController = Lookup.getDefault().lookup(DynamicController.class);
         DynamicModel dynamicModel = dynamicController.getModel();

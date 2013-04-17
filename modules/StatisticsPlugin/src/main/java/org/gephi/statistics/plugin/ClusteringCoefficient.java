@@ -58,8 +58,8 @@ import org.gephi.data.attributes.api.AttributeType;
 import org.gephi.graph.api.Edge;
 import org.gephi.graph.api.GraphController;
 import org.gephi.graph.api.GraphModel;
-import org.gephi.graph.api.HierarchicalDirectedGraph;
-import org.gephi.graph.api.HierarchicalGraph;
+//import org.gephi.graph.api.HierarchicalDirectedGraph;
+//import org.gephi.graph.api.HierarchicalGraph;
 import org.gephi.utils.longtask.spi.LongTask;
 import org.gephi.utils.progress.Progress;
 import org.gephi.utils.progress.ProgressTicket;
@@ -219,8 +219,8 @@ public class ClusteringCoefficient implements Statistics, LongTask {
 
     public ClusteringCoefficient() {
         GraphController graphController = Lookup.getDefault().lookup(GraphController.class);
-        if (graphController != null && graphController.getModel() != null) {
-            isDirected = graphController.getModel().isDirected();
+        if (graphController != null && graphController.getGraphModel() != null) {
+            isDirected = graphController.getGraphModel().isDirected();
         }
     }
 

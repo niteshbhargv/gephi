@@ -52,6 +52,11 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>core-library-wrapper</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>graph-store</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>

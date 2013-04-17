@@ -1217,7 +1217,8 @@
         <module>modules/WorkspaceUI</module>
         <module>modules/CoreLibraryWrapper</module>
         <module>modules/UILibraryWrapper</module>
-        <module>../../forked1/gephi/modules/StatisticsAPI</module>
-        <module>../../forked1/gephi/modules/StatisticsPlugin</module>
+        <module>modules/StatisticsAPI</module>
+        <module>modules/StatisticsPluginUI</module>
+        <module>modules/StatisticsPlugin</module>
     </modules>
 </project>
