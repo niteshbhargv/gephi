@@ -53,8 +53,8 @@ import org.gephi.data.attributes.api.AttributeRow;
 import org.gephi.data.attributes.api.AttributeType;
 import org.gephi.graph.api.DirectedGraph;
 import org.gephi.graph.api.GraphModel;
-import org.gephi.graph.api.HierarchicalDirectedGraph;
-import org.gephi.graph.api.HierarchicalGraph;
+//import org.gephi.graph.api.HierarchicalDirectedGraph;
+//import org.gephi.graph.api.HierarchicalGraph;
 import org.gephi.graph.api.Node;
 import org.gephi.statistics.spi.Statistics;
 import org.gephi.utils.longtask.spi.LongTask;
@@ -97,8 +97,8 @@ public class Degree implements Statistics, LongTask {
      * @param graphModel
      */
     public void execute(GraphModel graphModel, AttributeModel attributeModel) {
-        HierarchicalGraph graph = graphModel.getHierarchicalGraphVisible();
-        execute(graph, attributeModel);
+        //HierarchicalGraph graph = graphModel.getHierarchicalGraphVisible();
+       // execute(graph, attributeModel);
     }
 
     public void execute(HierarchicalGraph graph, AttributeModel attributeModel) {

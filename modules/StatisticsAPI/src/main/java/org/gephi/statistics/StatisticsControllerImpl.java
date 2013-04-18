@@ -56,6 +56,7 @@ import org.gephi.graph.api.Graph;
 import org.gephi.graph.api.GraphController;
 import org.gephi.graph.api.GraphModel;
 //import org.gephi.graph.api.HierarchicalGraph;
+//import org.gephi.graph.api.HierarchicalGraph;
 import org.gephi.project.api.ProjectController;
 import org.gephi.utils.longtask.spi.LongTask;
 import org.gephi.utils.longtask.api.LongTaskExecutor;
@@ -191,8 +192,9 @@ public class StatisticsControllerImpl implements StatisticsController {
             dynamicLongTask.start(c);
         }
 
-        HierarchicalGraph graph = graphModel.getHierarchicalGraphVisible();
-        DynamicGraph dynamicGraph = dynamicModel.createDynamicGraph(graph, bounds);
+       // HierarchicalGraph graph = graphModel.getHierarchicalGraphVisible();
+      //  DynamicGraph dynamicGraph;
+      //  dynamicGraph = dynamicModel.createDynamicGraph(graph, bounds);
 
         //Init
         statistics.execute(graphModel, attributeModel);
@@ -201,9 +203,9 @@ public class StatisticsControllerImpl implements StatisticsController {
         for (double low = bounds.getLow(); low <= bounds.getHigh() - window; low += tick) {
             double high = low + window;
 
-            Graph g = dynamicGraph.getSnapshotGraph(low, high);
+       //     Graph g = dynamicGraph.getSnapshotGraph(low, high);
 
-            statistics.loop(g.getView(), new Interval(low, high));
+         //   statistics.loop(g.getView(), new Interval(low, high));
 
             //Cancelled?
             if (dynamicLongTask != null && dynamicLongTask.isCancelled()) {

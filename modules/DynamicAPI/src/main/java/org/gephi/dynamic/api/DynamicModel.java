@@ -42,6 +42,8 @@
  */
 package org.gephi.dynamic.api;
 
+import org.gephi.data.attributes.type.Interval;
+import org.gephi.data.attributes.type.TimeInterval;
 import org.gephi.graph.api.Graph;
 
 /**
@@ -93,7 +95,7 @@ public interface DynamicModel {
      *
      * @return a new a new {@code DynamicGraph}.
      */
-    public DynamicGraph createDynamicGraph(Graph graph);
+    public DynamicGraph createDynamicGraph(Graph graph,Interval interval);
 
     /**
      * Builds a new {@code DynamicGraph} from the given {@code Graph} instance
@@ -141,6 +143,7 @@ public interface DynamicModel {
      * @return the current time format
      */
     public TimeFormat getTimeFormat();
+    public TimeInterval getVisibleInterval();
 
     /**
      * Returns the current

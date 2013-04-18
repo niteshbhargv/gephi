@@ -1193,7 +1193,6 @@
         <module>modules/GeneratorPlugin</module>
         <module>modules/GeneratorPluginUI</module>
         <module>modules/Gleem</module>
-        <module>modules/GraphAPI</module>
         <module>modules/ImportAPI</module>
         <module>modules/ImportPlugin</module>
         <module>modules/ImportPluginUI</module>
@@ -1220,5 +1219,6 @@
         <module>modules/StatisticsAPI</module>
         <module>modules/StatisticsPluginUI</module>
         <module>modules/StatisticsPlugin</module>
+        <module>modules/GraphAPI</module>
     </modules>
 </project>

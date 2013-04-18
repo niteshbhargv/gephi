@@ -41,12 +41,16 @@
  */
 package org.gephi.dynamic.api;
 
+import org.gephi.graph.api.Graph;
+
 /**
  * The wrapper for graph and time interval.
  *
  * @author Cezary Bartosiak
  */
 public interface DynamicGraph {
+
+    public Graph getSnapshotGraph(double low, double high);
 //    /**
 //     * Returns values of attributes of the given {@code Node} in the given
 //     * {@code point} of time using {@code Estimator.FIRST} for each dynamic

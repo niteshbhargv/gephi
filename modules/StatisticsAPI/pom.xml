@@ -26,10 +26,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>graph-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>project-api</artifactId>
         </dependency>
         <dependency>
@@ -54,8 +50,8 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>graph-store</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <artifactId>graph-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
