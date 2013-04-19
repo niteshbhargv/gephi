@@ -48,7 +48,7 @@ import org.gephi.statistics.api.*;
 import org.gephi.data.attributes.api.AttributeController;
 import org.gephi.data.attributes.api.AttributeModel;
 import org.gephi.data.attributes.type.Interval;
-import org.gephi.data.attributes.type.TimeInterval;
+//import org.gephi.data.attributes.type.TimeInterval;
 import org.gephi.dynamic.api.DynamicController;
 import org.gephi.dynamic.api.DynamicGraph;
 import org.gephi.dynamic.api.DynamicModel;
