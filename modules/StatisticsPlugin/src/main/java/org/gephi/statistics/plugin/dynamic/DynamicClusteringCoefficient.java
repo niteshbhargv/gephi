@@ -54,10 +54,11 @@ import org.gephi.data.attributes.type.DynamicDouble;
 import org.gephi.data.attributes.type.Interval;
 import org.gephi.dynamic.api.DynamicController;
 import org.gephi.dynamic.api.DynamicModel;
+import org.gephi.graph.api.Graph;
 import org.gephi.graph.api.GraphController;
 import org.gephi.graph.api.GraphModel;
 import org.gephi.graph.api.GraphView;
-import org.gephi.graph.api.HierarchicalGraph;
+//import org.gephi.graph.api.HierarchicalGraph;
 import org.gephi.graph.api.Node;
 import org.gephi.statistics.plugin.ChartUtils;
 import org.gephi.statistics.plugin.ClusteringCoefficient;
@@ -97,8 +98,8 @@ public class DynamicClusteringCoefficient implements DynamicStatistics, LongTask
 
     public DynamicClusteringCoefficient() {
         GraphController graphController = Lookup.getDefault().lookup(GraphController.class);
-        if (graphController != null && graphController.getModel() != null) {
-            isDirected = graphController.getModel().isDirected();
+        if (graphController != null && graphController.getGraphModel() != null) {
+            isDirected = graphController.getGraphModel().isDirected();
         }
     }
 
@@ -169,11 +170,11 @@ public class DynamicClusteringCoefficient implements DynamicStatistics, LongTask
     }
 
     public void loop(GraphView window, Interval interval) {
-        HierarchicalGraph graph = null;
+        Graph graph = null;
         if (isDirected) {
-            graph = graphModel.getHierarchicalDirectedGraph(window);
+            graph = graphModel.getDirectedGraph(window);
         } else {
-            graph = graphModel.getHierarchicalUndirectedGraph(window);
+            graph = graphModel.getUndirectedGraph(window);
         }
 
         graph.readLock();

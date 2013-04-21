@@ -53,11 +53,11 @@ import org.gephi.data.attributes.api.AttributeType;
 import org.gephi.data.attributes.type.DynamicDouble;
 import org.gephi.data.attributes.type.DynamicInteger;
 import org.gephi.data.attributes.type.Interval;
+import org.gephi.graph.api.DirectedGraph;
+import org.gephi.graph.api.Graph;
 import org.gephi.graph.api.GraphController;
 import org.gephi.graph.api.GraphModel;
 import org.gephi.graph.api.GraphView;
-import org.gephi.graph.api.HierarchicalDirectedGraph;
-import org.gephi.graph.api.HierarchicalGraph;
 import org.gephi.graph.api.Node;
 import org.gephi.statistics.plugin.ChartUtils;
 import org.gephi.statistics.spi.DynamicStatistics;
@@ -99,8 +99,8 @@ public class DynamicDegree implements DynamicStatistics, LongTask {
 
     public DynamicDegree() {
         GraphController graphController = Lookup.getDefault().lookup(GraphController.class);
-        if (graphController != null && graphController.getModel() != null) {
-            isDirected = graphController.getModel().isDirected();
+        if (graphController != null && graphController.getGraphModel() != null) {
+            isDirected = graphController.getGraphModel().isDirected();
         }
     }
 
@@ -181,15 +181,15 @@ public class DynamicDegree implements DynamicStatistics, LongTask {
     }
 
     public void loop(GraphView window, Interval interval) {
-        HierarchicalGraph graph = graphModel.getHierarchicalGraph(window);
-        HierarchicalDirectedGraph directedGraph = null;
+        Graph graph = graphModel.getGraph(window);
+        DirectedGraph directedGraph = null;
         if (isDirected) {
-            directedGraph = graphModel.getHierarchicalDirectedGraph(window);
+            directedGraph = graphModel.getDirectedGraph(window);
         }
 
         long sum = 0;
         for (Node n : graph.getNodes().toArray()) {
-            int degree = graph.getTotalDegree(n);
+            int degree = graph.getDegree(n);
 
             if (!averageOnly) {
                 Interval<Integer> degreeInInterval = new Interval<Integer>(interval, degree);
@@ -202,7 +202,7 @@ public class DynamicDegree implements DynamicStatistics, LongTask {
                 n.getAttributes().setValue(dynamicDegreeColumn.getIndex(), val);
 
                 if (isDirected) {
-                    int indegree = directedGraph.getTotalInDegree(n);
+                    int indegree = directedGraph.getInDegree(n);
                     Interval<Integer> inDegreeInInterval = new Interval<Integer>(interval, indegree);
                     DynamicInteger inVal = (DynamicInteger) n.getAttributes().getValue(dynamicInDegreeColumn.getIndex());
                     if (inVal == null) {
@@ -212,7 +212,7 @@ public class DynamicDegree implements DynamicStatistics, LongTask {
                     }
                     n.getAttributes().setValue(dynamicInDegreeColumn.getIndex(), inVal);
 
-                    int outdegree = directedGraph.getTotalOutDegree(n);
+                    int outdegree = directedGraph.getOutDegree(n);
                     Interval<Integer> outDegreeInInterval = new Interval<Integer>(interval, outdegree);
                     DynamicInteger outVal = (DynamicInteger) n.getAttributes().getValue(dynamicOutDegreeColumn.getIndex());
                     if (outVal == null) {

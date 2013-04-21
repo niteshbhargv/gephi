@@ -58,6 +58,8 @@ import org.gephi.data.attributes.api.AttributeType;
 import org.gephi.graph.api.Edge;
 import org.gephi.graph.api.GraphController;
 import org.gephi.graph.api.GraphModel;
+import org.gephi.graph.api.Graph;
+import org.gephi.graph.api.DirectedGraph;
 //import org.gephi.graph.api.HierarchicalDirectedGraph;
 //import org.gephi.graph.api.HierarchicalGraph;
 import org.gephi.utils.longtask.spi.LongTask;
@@ -229,17 +231,17 @@ public class ClusteringCoefficient implements Statistics, LongTask {
     }
 
     public void execute(GraphModel graphModel, AttributeModel attributeModel) {
-        HierarchicalGraph hgraph = null;
+        Graph hgraph = null;
         if (isDirected) {
-            hgraph = graphModel.getHierarchicalDirectedGraphVisible();
+            hgraph = graphModel.getDirectedGraphVisible();
         } else {
-            hgraph = graphModel.getHierarchicalUndirectedGraphVisible();
+            hgraph = graphModel.getUndirectedGraphVisible();
         }
 
         execute(hgraph, attributeModel);
     }
 
-    public void execute(HierarchicalGraph hgraph, AttributeModel attributeModel) {
+    public void execute(Graph hgraph, AttributeModel attributeModel) {
         isCanceled = false;
 
         if(isDirected)
@@ -265,7 +267,8 @@ public class ClusteringCoefficient implements Statistics, LongTask {
 
         for (int v = 0; v < N; v++) {
             if (network[v].length() > 1) {
-                AttributeRow row = (AttributeRow) network[v].node.getNodeData().getAttributes();
+                AttributeRow row;
+                row = (AttributeRow)network[v].node.getAttributes();
                 row.setValue(clusteringCol, nodeClustering[v]);
                 if(!isDirected)
                     row.setValue(triCount, triangles[v]);
@@ -353,7 +356,7 @@ public class ClusteringCoefficient implements Statistics, LongTask {
         }
     }
 
-    public void triangles(HierarchicalGraph hgraph) {
+    public void triangles(Graph hgraph) {
 
         int ProgressCount = 0;
         Progress.start(progress, 7 * hgraph.getNodeCount());
@@ -381,17 +384,17 @@ public class ClusteringCoefficient implements Statistics, LongTask {
             HashMap<Node, EdgeWrapper> neighborTable = new HashMap<Node, EdgeWrapper>();
 
             if (!isDirected) {
-                for (Edge edge : hgraph.getEdgesAndMetaEdges(node)) {
+                for (Edge edge : hgraph.getEdges(node)) {
                     Node neighbor = hgraph.getOpposite(node, edge);
                     neighborTable.put(neighbor, new EdgeWrapper(1, network[indicies.get(neighbor)]));
                 }
             } else {
-                for (Edge in : ((HierarchicalDirectedGraph) hgraph).getInEdgesAndMetaInEdges(node)) {
-                    Node neighbor = in.getSource().getNodeData().getNode(hgraph.getView().getViewId());
+                for (Edge in : ((DirectedGraph) hgraph).getInEdges(node)) {
+                    Node neighbor = in.getSource().getLayoutData().getNode(hgraph.getView().getViewId());
                     neighborTable.put(neighbor, new EdgeWrapper(1, network[indicies.get(neighbor)]));
                 }
 
-                for (Edge out : ((HierarchicalDirectedGraph) hgraph).getOutEdgesAndMetaOutEdges(node)) {
+                for (Edge out : ((DirectedGraph) hgraph).getOutEdges(node)) {
                     Node neighbor = out.getTarget().getNodeData().getNode(hgraph.getView().getViewId());
                     EdgeWrapper ew = neighborTable.get(neighbor);
                     if (ew == null) {
@@ -484,7 +487,7 @@ public class ClusteringCoefficient implements Statistics, LongTask {
         hgraph.readUnlock();
     }
 
-    private void bruteForce(HierarchicalGraph hgraph, AttributeModel attributeModel) {
+    private void bruteForce(Graph hgraph, AttributeModel attributeModel) {
     //The atrributes computed by the statistics
     AttributeTable nodeTable = attributeModel.getNodeTable();
     AttributeColumn clusteringCol = nodeTable.getColumn("clustering");
@@ -511,10 +514,10 @@ public class ClusteringCoefficient implements Statistics, LongTask {
     continue;
     }
     if (isDirected) {
-    if (((HierarchicalDirectedGraph) hgraph).getEdge(neighbor1, neighbor2) != null) {
+    if (((DirectedGraph) hgraph).getEdge(neighbor1, neighbor2) != null) {
     nodeCC++;
     }
-    if (((HierarchicalDirectedGraph) hgraph).getEdge(neighbor2, neighbor1) != null) {
+    if (((DirectedGraph) hgraph).getEdge(neighbor2, neighbor1) != null) {
     nodeCC++;
     }
     } else {

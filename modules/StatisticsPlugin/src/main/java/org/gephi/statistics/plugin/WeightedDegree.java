@@ -54,9 +54,8 @@ import org.gephi.data.attributes.api.AttributeTable;
 import org.gephi.data.attributes.api.AttributeType;
 import org.gephi.graph.api.DirectedGraph;
 import org.gephi.graph.api.Edge;
+import org.gephi.graph.api.Graph;
 import org.gephi.graph.api.GraphModel;
-import org.gephi.graph.api.HierarchicalDirectedGraph;
-import org.gephi.graph.api.HierarchicalGraph;
 import org.gephi.graph.api.Node;
 import org.gephi.statistics.spi.Statistics;
 import org.gephi.utils.longtask.spi.LongTask;
@@ -90,11 +89,11 @@ public class WeightedDegree implements Statistics, LongTask {
     }
 
     public void execute(GraphModel graphModel, AttributeModel attributeModel) {
-        HierarchicalGraph graph = graphModel.getHierarchicalGraphVisible();
+        Graph graph = graphModel.getGraph(graphModel.getVisibleView());
         execute(graph, attributeModel);
     }
 
-    public void execute(HierarchicalGraph graph, AttributeModel attributeModel) {
+    public void execute(Graph graph, AttributeModel attributeModel) {
         isDirected = graph instanceof DirectedGraph;
         isCanceled = false;
         degreeDist = new HashMap<Double, Integer>();
@@ -126,10 +125,10 @@ public class WeightedDegree implements Statistics, LongTask {
             AttributeRow row = (AttributeRow) n.getNodeData().getAttributes();
             double totalWeight = 0;
             if (isDirected) {
-                HierarchicalDirectedGraph hdg = graph.getGraphModel().getHierarchicalDirectedGraph();
+               // DirectedGraph hdg = graph.getGraphModel().getHierarchicalDirectedGraph(); // hdg not being used anywhere
                 double totalInWeight = 0;
                 double totalOutWeight = 0;
-                for (Iterator it = graph.getEdgesAndMetaEdges(n).iterator(); it.hasNext();) {
+                for (Iterator it = graph.getEdges(n).iterator(); it.hasNext();) {
                     Edge e = (Edge) it.next();
                     if (e.getSource().getNodeData().equals(n.getNodeData())) {
                         totalOutWeight += e.getWeight();
@@ -150,7 +149,7 @@ public class WeightedDegree implements Statistics, LongTask {
                 }
                 outDegreeDist.put(totalOutWeight, outDegreeDist.get(totalOutWeight) + 1);
             } else {
-                for (Iterator it = graph.getEdgesAndMetaEdges(n).iterator(); it.hasNext();) {
+                for (Iterator it = graph.getEdges(n).iterator(); it.hasNext();) {
                     Edge e = (Edge) it.next();
                     totalWeight += e.getWeight();
                 }

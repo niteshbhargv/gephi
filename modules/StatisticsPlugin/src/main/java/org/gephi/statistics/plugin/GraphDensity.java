@@ -44,9 +44,10 @@ package org.gephi.statistics.plugin;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import org.gephi.data.attributes.api.AttributeModel;
+import org.gephi.graph.api.Graph;
 import org.gephi.graph.api.GraphController;
 import org.gephi.graph.api.GraphModel;
-import org.gephi.graph.api.HierarchicalGraph;
+//import org.gephi.graph.api.HierarchicalGraph;
 import org.gephi.statistics.spi.Statistics;
 import org.openide.util.Lookup;
 
@@ -63,8 +64,8 @@ public class GraphDensity implements Statistics {
 
     public GraphDensity() {
         GraphController graphController = Lookup.getDefault().lookup(GraphController.class);
-        if (graphController != null && graphController.getModel() != null) {
-            isDirected = graphController.getModel().isDirected();
+        if (graphController != null && graphController.getGraphModel() != null) {
+            isDirected = graphController.getGraphModel().isDirected();
         }
     }
 
@@ -81,15 +82,15 @@ public class GraphDensity implements Statistics {
     }
 
     public void execute(GraphModel graphModel, AttributeModel attributeModel) {
-        HierarchicalGraph hgraph;
+        Graph hgraph;
 
         if (isDirected) {
-            hgraph = graphModel.getHierarchicalDirectedGraphVisible();
+            hgraph = graphModel.getDirectedGraphVisible();
         } else {
-            hgraph = graphModel.getHierarchicalUndirectedGraphVisible();
+            hgraph = graphModel.getUndirectedGraphVisible();
         }
 
-        double edgesCount = hgraph.getTotalEdgeCount();
+        double edgesCount = hgraph.getEdgeCount();
         double nodesCount = hgraph.getNodeCount();
         double multiplier = 1;
 

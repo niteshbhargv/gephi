@@ -48,15 +48,14 @@ import org.gephi.statistics.api.*;
 import org.gephi.data.attributes.api.AttributeController;
 import org.gephi.data.attributes.api.AttributeModel;
 import org.gephi.data.attributes.type.Interval;
-//import org.gephi.data.attributes.type.TimeInterval;
 import org.gephi.dynamic.api.DynamicController;
+//import org.gephi.data.attributes.type.TimeInterval;
+//import org.gephi.dynamic.api.DynamicController;
 import org.gephi.dynamic.api.DynamicGraph;
 import org.gephi.dynamic.api.DynamicModel;
 import org.gephi.graph.api.Graph;
 import org.gephi.graph.api.GraphController;
 import org.gephi.graph.api.GraphModel;
-//import org.gephi.graph.api.HierarchicalGraph;
-//import org.gephi.graph.api.HierarchicalGraph;
 import org.gephi.project.api.ProjectController;
 import org.gephi.utils.longtask.spi.LongTask;
 import org.gephi.utils.longtask.api.LongTaskExecutor;
@@ -172,7 +171,7 @@ public class StatisticsControllerImpl implements StatisticsController {
         double tick = statistics.getTick();
         Interval bounds = statistics.getBounds();
         if (bounds == null) {
-            TimeInterval visibleInterval = dynamicModel.getVisibleInterval();
+            Interval visibleInterval = dynamicModel.getVisibleInterval();
             double low = visibleInterval.getLow();
             if (Double.isInfinite(low)) {
                 low = dynamicModel.getMin();
@@ -192,9 +191,9 @@ public class StatisticsControllerImpl implements StatisticsController {
             dynamicLongTask.start(c);
         }
 
-       // HierarchicalGraph graph = graphModel.getHierarchicalGraphVisible();
-      //  DynamicGraph dynamicGraph;
-      //  dynamicGraph = dynamicModel.createDynamicGraph(graph, bounds);
+        Graph graph = graphModel.getGraph(graphModel.getVisibleView());
+        DynamicGraph dynamicGraph;
+        dynamicGraph = dynamicModel.createDynamicGraph(graph, bounds);
 
         //Init
         statistics.execute(graphModel, attributeModel);
@@ -203,9 +202,9 @@ public class StatisticsControllerImpl implements StatisticsController {
         for (double low = bounds.getLow(); low <= bounds.getHigh() - window; low += tick) {
             double high = low + window;
 
-       //     Graph g = dynamicGraph.getSnapshotGraph(low, high);
+            Graph g = dynamicGraph.getSnapshotGraph(low, high);
 
-         //   statistics.loop(g.getView(), new Interval(low, high));
+            statistics.loop(g.getView(), new Interval(low, high));
 
             //Cancelled?
             if (dynamicLongTask != null && dynamicLongTask.isCancelled()) {

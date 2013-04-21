@@ -52,9 +52,9 @@ import org.gephi.data.attributes.api.AttributeTable;
 import org.gephi.data.attributes.api.AttributeType;
 import org.gephi.data.attributes.type.DynamicInteger;
 import org.gephi.data.attributes.type.Interval;
+import org.gephi.graph.api.Graph;
 import org.gephi.graph.api.GraphModel;
 import org.gephi.graph.api.GraphView;
-import org.gephi.graph.api.HierarchicalGraph;
 import org.gephi.statistics.plugin.ChartUtils;
 import org.gephi.statistics.spi.DynamicStatistics;
 import org.jfree.chart.ChartFactory;
@@ -137,7 +137,7 @@ public class DynamicNbEdges implements DynamicStatistics {
     }
 
     public void loop(GraphView window, Interval interval) {
-        HierarchicalGraph graph = graphModel.getHierarchicalGraph(window);
+        Graph graph = graphModel.getGraph(window);
 
         int count = graph.getEdgeCount();
 

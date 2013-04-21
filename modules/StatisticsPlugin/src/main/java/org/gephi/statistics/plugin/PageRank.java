@@ -49,13 +49,13 @@ import org.gephi.data.attributes.api.AttributeModel;
 import org.gephi.data.attributes.api.AttributeOrigin;
 import org.gephi.data.attributes.api.AttributeRow;
 import org.gephi.data.attributes.api.AttributeType;
+import org.gephi.graph.api.DirectedGraph;
+import org.gephi.graph.api.UndirectedGraph;
 import org.gephi.graph.api.Edge;
 import org.gephi.graph.api.EdgeIterable;
+import org.gephi.graph.api.Graph;
 import org.gephi.graph.api.GraphController;
 import org.gephi.graph.api.GraphModel;
-import org.gephi.graph.api.HierarchicalDirectedGraph;
-import org.gephi.graph.api.HierarchicalGraph;
-import org.gephi.graph.api.HierarchicalUndirectedGraph;
 import org.gephi.graph.api.Node;
 import org.gephi.statistics.spi.Statistics;
 import org.gephi.utils.longtask.spi.LongTask;
@@ -93,8 +93,8 @@ public class PageRank implements Statistics, LongTask {
 
     public PageRank() {
         GraphController graphController = Lookup.getDefault().lookup(GraphController.class);
-        if (graphController != null && graphController.getModel() != null) {
-            isDirected = graphController.getModel().isDirected();
+        if (graphController != null && graphController.getGraphModel() != null) {
+            isDirected = graphController.getGraphModel().isDirected();
         }
     }
 
@@ -111,16 +111,16 @@ public class PageRank implements Statistics, LongTask {
     }
 
     public void execute(GraphModel graphModel, AttributeModel attributeModel) {
-        HierarchicalGraph graph;
+        Graph graph;
         if (isDirected) {
-            graph = graphModel.getHierarchicalDirectedGraphVisible();
+            graph = graphModel.getDirectedGraphVisible();
         } else {
-            graph = graphModel.getHierarchicalUndirectedGraphVisible();
+            graph = graphModel.getUndirectedGraphVisible();
         }
         execute(graph, attributeModel);
     }
 
-    public void execute(HierarchicalGraph hgraph, AttributeModel attributeModel) {
+    public void execute(Graph hgraph, AttributeModel attributeModel) {
         isCanceled = false;
 
         hgraph.readLock();
@@ -144,9 +144,9 @@ public class PageRank implements Statistics, LongTask {
                 double sum = 0;
                 EdgeIterable eIter;
                 if (isDirected) {
-                    eIter = ((HierarchicalDirectedGraph) hgraph).getOutEdgesAndMetaOutEdges(s);
+                    eIter = ((DirectedGraph) hgraph).getOutEdges(s);
                 } else {
-                    eIter = ((HierarchicalUndirectedGraph) hgraph).getEdgesAndMetaEdges(s);
+                    eIter = ((UndirectedGraph) hgraph).getEdges(s);
                 }
                 for (Edge edge : eIter) {
                     sum += edge.getWeight();
@@ -162,9 +162,9 @@ public class PageRank implements Statistics, LongTask {
                 int s_index = indicies.get(s);
                 boolean out;
                 if (isDirected) {
-                    out = ((HierarchicalDirectedGraph) hgraph).getTotalOutDegree(s) > 0;
+                    out = ((DirectedGraph) hgraph).getOutDegree(s) > 0;
                 } else {
-                    out = hgraph.getTotalDegree(s) > 0;
+                    out = hgraph.getDegree(s) > 0;
                 }
 
                 if (out) {
@@ -185,9 +185,9 @@ public class PageRank implements Statistics, LongTask {
 
                 EdgeIterable eIter;
                 if (isDirected) {
-                    eIter = ((HierarchicalDirectedGraph) hgraph).getInEdgesAndMetaInEdges(s);
+                    eIter = ((DirectedGraph) hgraph).getInEdges(s);
                 } else {
-                    eIter = ((HierarchicalUndirectedGraph) hgraph).getEdgesAndMetaEdges(s);
+                    eIter = ((UndirectedGraph) hgraph).getEdges(s);
                 }
 
                 for (Edge edge : eIter) {
@@ -195,9 +195,9 @@ public class PageRank implements Statistics, LongTask {
                     int neigh_index = indicies.get(neighbor);
                     int normalize;
                     if (isDirected) {
-                        normalize = ((HierarchicalDirectedGraph) hgraph).getTotalOutDegree(neighbor);
+                        normalize = ((DirectedGraph) hgraph).getOutDegree(neighbor);
                     } else {
-                        normalize = ((HierarchicalUndirectedGraph) hgraph).getTotalDegree(neighbor);
+                        normalize = ((UndirectedGraph) hgraph).getDegree(neighbor);
                     }
                     if (useEdgeWeight) {
                         double weight = edge.getWeight() / weights[neigh_index];

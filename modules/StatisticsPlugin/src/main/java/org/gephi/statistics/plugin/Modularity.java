@@ -46,8 +46,9 @@ import java.text.NumberFormat;
 import java.util.*;
 import org.gephi.data.attributes.api.*;
 import org.gephi.graph.api.GraphModel;
-import org.gephi.graph.api.HierarchicalUndirectedGraph;
+//import org.gephi.graph.api.HierarchicalUndirectedGraph;
 import org.gephi.graph.api.Node;
+import org.gephi.graph.api.UndirectedGraph;
 import org.gephi.statistics.spi.Statistics;
 import org.gephi.utils.longtask.spi.LongTask;
 import org.gephi.utils.progress.Progress;
@@ -126,7 +127,7 @@ public class Modularity implements Statistics, LongTask {
         HashMap<Modularity.Community, Integer>[] nodeConnectionsCount;
         HashMap<Node, Integer> map;
         Community[] nodeCommunities;
-        HierarchicalUndirectedGraph graph;
+        UndirectedGraph graph;
         double[] weights;
         double graphWeightSum;
         LinkedList<ModEdge>[] topology;
@@ -134,7 +135,7 @@ public class Modularity implements Statistics, LongTask {
         int N;
         HashMap<Integer, Community> invMap;
 
-        CommunityStructure(HierarchicalUndirectedGraph hgraph) {
+        CommunityStructure(UndirectedGraph hgraph) {
             this.graph = hgraph;
             N = hgraph.getNodeCount();
             invMap = new HashMap<Integer, Community>();
@@ -174,7 +175,7 @@ public class Modularity implements Statistics, LongTask {
                     int neighbor_index = map.get(neighbor);
                     float weight = 1;
                     if(useWeight) {
-                        weight = hgraph.getEdge(node, neighbor).getWeight();
+                        weight = (float) hgraph.getEdge(node, neighbor, node_index).getWeight();
                     } 
                       
                     weights[node_index] += weight;
@@ -450,11 +451,11 @@ public class Modularity implements Statistics, LongTask {
     }
 
     public void execute(GraphModel graphModel, AttributeModel attributeModel) {
-        HierarchicalUndirectedGraph hgraph = graphModel.getHierarchicalUndirectedGraphVisible();
+        UndirectedGraph hgraph = graphModel.getUndirectedGraph(graphModel.getVisibleView());
         execute(hgraph, attributeModel);
     }
 
-    public void execute(HierarchicalUndirectedGraph hgraph, AttributeModel attributeModel) {
+    public void execute(UndirectedGraph hgraph, AttributeModel attributeModel) {
         isCanceled = false;
         Progress.start(progress);
         Random rand = new Random();
@@ -528,7 +529,7 @@ public class Modularity implements Statistics, LongTask {
             if(useWeight) {
                 degreeCount[comStructure[index]] += nodeDegrees[index];
             } else {                
-                degreeCount[comStructure[index]] += hgraph.getTotalDegree(node);
+                degreeCount[comStructure[index]] += hgraph.getDegree(node);
             }
             
         }
@@ -539,7 +540,7 @@ public class Modularity implements Statistics, LongTask {
         hgraph.readUnlock();
     }
 
-    private double finalQ(int[] struct, double[] degrees, HierarchicalUndirectedGraph hgraph, AttributeModel attributeModel, double totalWeight, double usedResolution) {
+    private double finalQ(int[] struct, double[] degrees, UndirectedGraph hgraph, AttributeModel attributeModel, double totalWeight, double usedResolution) {
         AttributeTable nodeTable = attributeModel.getNodeTable();
         AttributeColumn modCol = nodeTable.getColumn(MODULARITY_CLASS);
         if (modCol == null) {
@@ -559,7 +560,7 @@ public class Modularity implements Statistics, LongTask {
                 int neigh_index = structure.map.get(neighbor);
                 if (struct[neigh_index] == struct[n_index]) {
                     if(useWeight) {
-                        internal[struct[neigh_index]] += hgraph.getEdge(n, neighbor).getWeight();
+                        internal[struct[neigh_index]] += hgraph.getEdge(n, neighbor,n_index).getWeight();
                     } else {
                         internal[struct[neigh_index]]++;
                     }

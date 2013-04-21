@@ -62,6 +62,9 @@ import org.gephi.graph.api.GraphModel;
 //import org.gephi.graph.api.HierarchicalUndirectedGraph;
 import org.gephi.graph.api.Node;
 import org.gephi.graph.api.NodeIterable;
+import org.gephi.graph.api.UndirectedGraph;
+import org.gephi.graph.api.DirectedGraph;
+import org.gephi.graph.api.Graph;
 import org.gephi.statistics.spi.Statistics;
 import org.gephi.utils.longtask.spi.LongTask;
 import org.gephi.utils.progress.Progress;
@@ -91,22 +94,22 @@ public class ConnectedComponents implements Statistics, LongTask {
 
     public ConnectedComponents() {
         GraphController graphController = Lookup.getDefault().lookup(GraphController.class);
-        if (graphController != null && graphController.getModel() != null) {
-            isDirected = graphController.getModel().isDirected();
+        if (graphController != null && graphController.getGraphModel() != null) {
+            isDirected = graphController.getGraphModel().isDirected();
         }
     }
 
     public void execute(GraphModel graphModel, AttributeModel attributeModel) {
 
-        HierarchicalUndirectedGraph undirectedGraph = graphModel.getHierarchicalUndirectedGraphVisible();
+        UndirectedGraph undirectedGraph = graphModel.getUndirectedGraphVisible();
         weaklyConnected(undirectedGraph, attributeModel);
         if (isDirected) {
-            HierarchicalDirectedGraph directedGraph = graphModel.getHierarchicalDirectedGraphVisible();
+            DirectedGraph directedGraph = graphModel.getDirectedGraphVisible();
             top_tarjans(directedGraph, attributeModel);
         }
     }
 
-    public void weaklyConnected(HierarchicalUndirectedGraph hgraph, AttributeModel attributeModel) {
+    public void weaklyConnected(UndirectedGraph hgraph, AttributeModel attributeModel) {
         isCanceled = false;
         componentCount = 0;
         AttributeTable nodeTable = attributeModel.getNodeTable();
@@ -161,7 +164,7 @@ public class ConnectedComponents implements Statistics, LongTask {
                 component.add(u);
 
                 //Iterate over all of u's neighbors
-                EdgeIterable edgeIter = hgraph.getEdgesAndMetaEdges(u);
+                EdgeIterable edgeIter = hgraph.getEdges(u);
 
                 //For each neighbor
                 for (Edge edge : edgeIter) {
@@ -195,7 +198,7 @@ public class ConnectedComponents implements Statistics, LongTask {
         }
     }
 
-    public void top_tarjans(HierarchicalDirectedGraph hgraph, AttributeModel attributeModel) {
+    public void top_tarjans(DirectedGraph hgraph, AttributeModel attributeModel) {
         count = 1;
         stronglyCount = 0;
         AttributeTable nodeTable = attributeModel.getNodeTable();
@@ -239,13 +242,13 @@ public class ConnectedComponents implements Statistics, LongTask {
         }
     }
 
-    private void tarjans(AttributeColumn col, LinkedList<Node> S, HierarchicalDirectedGraph hgraph, Node f, int[] index, int[] low_index, HashMap<Node, Integer> indicies) {
+    private void tarjans(AttributeColumn col, LinkedList<Node> S, DirectedGraph hgraph, Node f, int[] index, int[] low_index, HashMap<Node, Integer> indicies) {
         int id = indicies.get(f);
         index[id] = count;
         low_index[id] = count;
         count++;
         S.addFirst(f);
-        EdgeIterable edgeIter = hgraph.getOutEdgesAndMetaOutEdges(f);
+        EdgeIterable edgeIter = hgraph.getOutEdges(f);
         for (Edge e : edgeIter) {
             Node u = hgraph.getOpposite(f, e);
             int x = indicies.get(u);

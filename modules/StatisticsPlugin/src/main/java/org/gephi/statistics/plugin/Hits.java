@@ -50,14 +50,15 @@ import org.gephi.data.attributes.api.AttributeModel;
 import org.gephi.data.attributes.api.AttributeOrigin;
 import org.gephi.data.attributes.api.AttributeRow;
 import org.gephi.data.attributes.api.AttributeType;
+import org.gephi.graph.api.DirectedGraph;
 import org.gephi.graph.api.Edge;
 import org.gephi.graph.api.EdgeIterable;
+import org.gephi.graph.api.Graph;
 import org.gephi.graph.api.GraphController;
 import org.gephi.graph.api.GraphModel;
-import org.gephi.graph.api.HierarchicalDirectedGraph;
-import org.gephi.graph.api.HierarchicalGraph;
-import org.gephi.graph.api.HierarchicalUndirectedGraph;
+
 import org.gephi.graph.api.Node;
+import org.gephi.graph.api.UndirectedGraph;
 import org.gephi.statistics.spi.Statistics;
 import org.gephi.utils.longtask.spi.LongTask;
 import org.gephi.utils.progress.Progress;
@@ -91,8 +92,8 @@ public class Hits implements Statistics, LongTask {
 
     public Hits() {
         GraphController graphController = Lookup.getDefault().lookup(GraphController.class);
-        if (graphController != null && graphController.getModel() != null) {
-            useUndirected = graphController.getModel().isUndirected();
+        if (graphController != null && graphController.getGraphModel() != null) {
+            useUndirected = graphController.getGraphModel().isUndirected();
         }
     }
 
@@ -109,16 +110,16 @@ public class Hits implements Statistics, LongTask {
     }
 
     public void execute(GraphModel graphModel, AttributeModel attributeModel) {
-        HierarchicalGraph graph = null;
+        Graph graph = null;
         if (useUndirected) {
-            graph = graphModel.getHierarchicalUndirectedGraphVisible();
+            graph = graphModel.getUndirectedGraphVisible();
         } else {
-            graph = graphModel.getHierarchicalDirectedGraphVisible();
+            graph = graphModel.getDirectedGraphVisible();
         }
         execute(graph, attributeModel);
     }
 
-    public void execute(HierarchicalGraph hgraph, AttributeModel attributeModel) {
+    public void execute(Graph hgraph, AttributeModel attributeModel) {
         hgraph.readLock();
 
         int N = hgraph.getNodeCount();
@@ -139,14 +140,14 @@ public class Hits implements Statistics, LongTask {
             index++;
 
             if (!useUndirected) {
-                if (((HierarchicalDirectedGraph) hgraph).getTotalOutDegree(node) > 0) {
+                if (((DirectedGraph) hgraph).getOutDegree(node) > 0) {
                     hub_list.add(node);
                 }
-                if (((HierarchicalDirectedGraph) hgraph).getTotalInDegree(node) > 0) {
+                if (((DirectedGraph) hgraph).getInDegree(node) > 0) {
                     auth_list.add(node);
                 }
             } else {
-                if (((HierarchicalUndirectedGraph) hgraph).getTotalDegree(node) > 0) {
+                if (((UndirectedGraph) hgraph).getDegree(node) > 0) {
                     hub_list.add(node);
                     auth_list.add(node);
                 }
@@ -173,9 +174,9 @@ public class Hits implements Statistics, LongTask {
                 temp_authority[n_index] = authority[n_index];
                 EdgeIterable edge_iter;
                 if (!useUndirected) {
-                    edge_iter = ((HierarchicalDirectedGraph) hgraph).getInEdgesAndMetaInEdges(node);
+                    edge_iter = ((DirectedGraph) hgraph).getInEdges(node);
                 } else {
-                    edge_iter = ((HierarchicalUndirectedGraph) hgraph).getEdgesAndMetaEdges(node);
+                    edge_iter = ((UndirectedGraph) hgraph).getEdges(node);
                 }
                 for (Edge edge : edge_iter) {
                     Node target = hgraph.getOpposite(node, edge);
@@ -197,9 +198,9 @@ public class Hits implements Statistics, LongTask {
                 temp_hubs[n_index] = hubs[n_index];
                 EdgeIterable edge_iter;
                 if (!useUndirected) {
-                    edge_iter = ((HierarchicalDirectedGraph) hgraph).getInEdgesAndMetaInEdges(node);
+                    edge_iter = ((DirectedGraph) hgraph).getInEdges(node);
                 } else {
-                    edge_iter = ((HierarchicalUndirectedGraph) hgraph).getEdgesAndMetaEdges(node);
+                    edge_iter = ((UndirectedGraph) hgraph).getEdges(node);
                 }
                 for (Edge edge : edge_iter) {
                     Node target = hgraph.getOpposite(node, edge);

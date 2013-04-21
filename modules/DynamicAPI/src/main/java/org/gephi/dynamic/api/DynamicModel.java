@@ -143,7 +143,7 @@ public interface DynamicModel {
      * @return the current time format
      */
     public TimeFormat getTimeFormat();
-    public TimeInterval getVisibleInterval();
+    public Interval getVisibleInterval();
 
     /**
      * Returns the current

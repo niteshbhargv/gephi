@@ -49,14 +49,17 @@ import org.gephi.data.attributes.api.AttributeOrigin;
 import org.gephi.data.attributes.api.AttributeRow;
 import org.gephi.data.attributes.api.AttributeTable;
 import org.gephi.data.attributes.api.AttributeType;
+import org.gephi.graph.api.DirectedGraph;
 import org.gephi.graph.api.Edge;
 import org.gephi.graph.api.EdgeIterable;
+import org.gephi.graph.api.Graph;
 import org.gephi.graph.api.GraphController;
 import org.gephi.graph.api.GraphModel;
-import org.gephi.graph.api.HierarchicalDirectedGraph;
-import org.gephi.graph.api.HierarchicalGraph;
-import org.gephi.graph.api.HierarchicalUndirectedGraph;
+//import org.gephi.graph.api.HierarchicalDirectedGraph;
+//import org.gephi.graph.api.HierarchicalGraph;
+//import org.gephi.graph.api.HierarchicalUndirectedGraph;
 import org.gephi.graph.api.Node;
+import org.gephi.graph.api.UndirectedGraph;
 import org.gephi.statistics.spi.Statistics;
 import org.gephi.utils.longtask.spi.LongTask;
 import org.gephi.utils.progress.Progress;
@@ -85,8 +88,8 @@ public class EigenvectorCentrality implements Statistics, LongTask {
 
     public EigenvectorCentrality() {
         GraphController graphController = Lookup.getDefault().lookup(GraphController.class);
-        if (graphController != null && graphController.getModel() != null) {
-            isDirected = graphController.getModel().isDirected();
+        if (graphController != null && graphController.getGraphModel() != null) {
+            isDirected = graphController.getGraphModel().isDirected();
         }
     }
 
@@ -124,16 +127,16 @@ public class EigenvectorCentrality implements Statistics, LongTask {
      * @param attributeModel
      */
     public void execute(GraphModel graphModel, AttributeModel attributeModel) {
-        HierarchicalGraph graph = null;
+        Graph graph = null;
         if (isDirected) {
-            graph = graphModel.getHierarchicalDirectedGraphVisible();
+            graph = graphModel.getDirectedGraphVisible();
         } else {
-            graph = graphModel.getHierarchicalUndirectedGraphVisible();
+            graph = graphModel.getUndirectedGraphVisible();
         }
         execute(graph, attributeModel);
     }
 
-    public void execute(HierarchicalGraph hgraph, AttributeModel attributeModel) {
+    public void execute(Graph hgraph, AttributeModel attributeModel) {
 
         AttributeTable nodeTable = attributeModel.getNodeTable();
         AttributeColumn eigenCol = nodeTable.getColumn(EIGENVECTOR);
@@ -164,9 +167,9 @@ public class EigenvectorCentrality implements Statistics, LongTask {
                 Node u = indicies.get(i);
                 EdgeIterable iter = null;
                 if (isDirected) {
-                    iter = ((HierarchicalDirectedGraph) hgraph).getInEdgesAndMetaInEdges(u);
+                    iter = ((DirectedGraph) hgraph).getInEdges(u);
                 } else {
-                    iter = ((HierarchicalUndirectedGraph) hgraph).getEdgesAndMetaEdges(u);
+                    iter = ((UndirectedGraph) hgraph).getEdges(u);
                 }
 
                 for (Edge e : iter) {

@@ -103,8 +103,8 @@ public class GraphDistance implements Statistics, LongTask {
 
     public GraphDistance() {
         GraphController graphController = Lookup.getDefault().lookup(GraphController.class);
-        if (graphController != null && graphController.getModel() != null) {
-            isDirected = graphController.getModel().isDirected();
+        if (graphController != null && graphController.getGraphModel() != null) {
+            isDirected = graphController.getGraphModel().isDirected();
         }
     }
 
@@ -125,16 +125,16 @@ public class GraphDistance implements Statistics, LongTask {
      * @param graphModel
      */
     public void execute(GraphModel graphModel, AttributeModel attributeModel) {
-        HierarchicalGraph graph = null;
+        Graph graph = null;
         if (isDirected) {
-            graph = graphModel.getHierarchicalDirectedGraphVisible();
+            graph = graphModel.getDirectedGraphVisible();
         } else {
-            graph = graphModel.getHierarchicalUndirectedGraphVisible();
+            graph = graphModel.getUndirectedGraphVisible();
         }
         execute(graph, attributeModel);
     }
 
-    public void execute(HierarchicalGraph hgraph, AttributeModel attributeModel) {
+    public void execute(Graph hgraph, AttributeModel attributeModel) {
         isCanceled = false;
         AttributeTable nodeTable = attributeModel.getNodeTable();
         AttributeColumn eccentricityCol = nodeTable.getColumn(ECCENTRICITY);
@@ -196,9 +196,9 @@ public class GraphDistance implements Statistics, LongTask {
 
                 EdgeIterable edgeIter = null;
                 if (isDirected) {
-                    edgeIter = ((HierarchicalDirectedGraph) hgraph).getOutEdgesAndMetaOutEdges(v);
+                    edgeIter = ((DirectedGraph) hgraph).getOutEdges(v);
                 } else {
-                    edgeIter = hgraph.getEdgesAndMetaEdges(v);
+                    edgeIter = hgraph.getEdges(v);
                 }
 
                 for (Edge edge : edgeIter) {
