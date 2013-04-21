@@ -53,6 +53,7 @@ import org.gephi.data.attributes.api.AttributeRow;
 import org.gephi.data.attributes.api.AttributeType;
 import org.gephi.graph.api.DirectedGraph;
 import org.gephi.graph.api.GraphModel;
+import org.gephi.graph.api.Graph;
 //import org.gephi.graph.api.HierarchicalDirectedGraph;
 //import org.gephi.graph.api.HierarchicalGraph;
 import org.gephi.graph.api.Node;
@@ -101,7 +102,7 @@ public class Degree implements Statistics, LongTask {
        // execute(graph, attributeModel);
     }
 
-    public void execute(HierarchicalGraph graph, AttributeModel attributeModel) {
+    public void execute(Graph graph, AttributeModel attributeModel) {
         isDirected = graph instanceof DirectedGraph;
         isCanceled = false;
         inDegreeDist = new HashMap<Integer, Integer>();
@@ -136,9 +137,9 @@ public class Degree implements Statistics, LongTask {
 
         Progress.start(progress, graph.getNodeCount());
         
-        HierarchicalDirectedGraph directedGraph = null;
+        DirectedGraph directedGraph = null;
         if(isDirected) {
-            directedGraph = graph.getGraphModel().getHierarchicalDirectedGraphVisible();
+             directedGraph = graph.getGraphModel().getDirectedGraphVisible();
         }
 
         for (Node n : graph.getNodes()) {
