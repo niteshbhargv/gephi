@@ -44,6 +44,7 @@ package org.gephi.statistics.plugin;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import org.gephi.attribute.api.Column;
 import org.gephi.data.attributes.api.AttributeTable;
 import org.gephi.data.attributes.api.AttributeColumn;
 import org.gephi.data.attributes.api.AttributeModel;
@@ -251,9 +252,9 @@ public class Hits implements Statistics, LongTask {
 
         for (Node s : hgraph.getNodes()) {
             int s_index = indicies.get(s);
-            AttributeRow row = (AttributeRow) s.getNodeData().getAttributes();
-            row.setValue(authorityCol, (float) authority[s_index]);
-            row.setValue(hubsCol, (float) hubs[s_index]);
+            //AttributeRow row = (AttributeRow) s.getNodeData().getAttributes();
+            s.setAttribute((Column)authorityCol, (float) authority[s_index]);
+            s.setAttribute((Column) hubsCol, (float) hubs[s_index]);
         }
 
         hgraph.readUnlockAll();

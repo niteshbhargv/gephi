@@ -43,6 +43,7 @@ package org.gephi.statistics.plugin;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.gephi.attribute.api.Column;
 import org.gephi.data.attributes.api.AttributeTable;
 import org.gephi.data.attributes.api.AttributeColumn;
 import org.gephi.data.attributes.api.AttributeModel;
@@ -234,8 +235,8 @@ public class PageRank implements Statistics, LongTask {
 
         for (Node s : hgraph.getNodes()) {
             int s_index = indicies.get(s);
-            AttributeRow row = (AttributeRow) s.getNodeData().getAttributes();
-            row.setValue(pangeRanksCol, pageranks[s_index]);
+         //   AttributeRow row = (AttributeRow) s.getNodeData().getAttributes();
+            s.setAttribute((Column) pangeRanksCol, pageranks[s_index]);
         }
 
         hgraph.readUnlockAll();

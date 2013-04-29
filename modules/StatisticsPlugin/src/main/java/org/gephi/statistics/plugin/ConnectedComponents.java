@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.gephi.attribute.api.Column;
 import org.gephi.data.attributes.api.AttributeColumn;
 import org.gephi.data.attributes.api.AttributeModel;
 import org.gephi.data.attributes.api.AttributeOrigin;
@@ -184,8 +185,8 @@ public class ConnectedComponents implements Statistics, LongTask {
                 seenCount++;
             }
             for (Node s : component) {
-                AttributeRow row = (AttributeRow) s.getNodeData().getAttributes();
-                row.setValue(componentCol, componentCount);
+               // AttributeRow row = (AttributeRow) s.getNodeData().getAttributes();
+                s.setAttribute((Column) componentCol, componentCount);
             }
             sizeList.add(component.size());
             componentCount++;
@@ -263,8 +264,8 @@ public class ConnectedComponents implements Statistics, LongTask {
             Node v = null;
             while (v != f) {
                 v = S.removeFirst();
-                AttributeRow row = (AttributeRow) v.getNodeData().getAttributes();
-                row.setValue(col, stronglyCount);
+               
+                v.setAttribute((Column) col, stronglyCount);
             }
             stronglyCount++;
         }

@@ -44,6 +44,7 @@ package org.gephi.statistics.plugin;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
+import org.gephi.attribute.api.Column;
 import org.gephi.data.attributes.api.*;
 import org.gephi.graph.api.GraphModel;
 //import org.gephi.graph.api.HierarchicalUndirectedGraph;
@@ -551,8 +552,8 @@ public class Modularity implements Statistics, LongTask {
         double[] internal = new double[degrees.length];
         for (Node n : hgraph.getNodes()) {
             int n_index = structure.map.get(n);
-            AttributeRow row = (AttributeRow) n.getNodeData().getAttributes();
-            row.setValue(modCol, struct[n_index]);
+            //AttributeRow row = (AttributeRow) n.getNodeData().getAttributes();
+            n.setAttribute((Column) modCol, struct[n_index]);
             for (Node neighbor : hgraph.getNeighbors(n)) {
                 if (n == neighbor) {
                     continue;
@@ -582,7 +583,7 @@ public class Modularity implements Statistics, LongTask {
         //Distribution series
         Map<Integer, Integer> sizeDist = new HashMap<Integer, Integer>();
         for(Node n : structure.graph.getNodes()) {
-            Integer v = (Integer) n.getNodeData().getAttributes().getValue(MODULARITY_CLASS);
+            Integer v = (Integer) n.getAttribute(MODULARITY_CLASS);
             if(!sizeDist.containsKey(v)) {
                 sizeDist.put(v, 0);
             }

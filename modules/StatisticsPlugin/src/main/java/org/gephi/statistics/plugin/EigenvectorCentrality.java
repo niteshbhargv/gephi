@@ -43,6 +43,7 @@ package org.gephi.statistics.plugin;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.gephi.attribute.api.Column;
 import org.gephi.data.attributes.api.AttributeColumn;
 import org.gephi.data.attributes.api.AttributeModel;
 import org.gephi.data.attributes.api.AttributeOrigin;
@@ -202,8 +203,8 @@ public class EigenvectorCentrality implements Statistics, LongTask {
 
         for (int i = 0; i < N; i++) {
             Node s = indicies.get(i);
-            AttributeRow row = (AttributeRow) s.getNodeData().getAttributes();
-            row.setValue(eigenCol, centralities[i]);
+         //   AttributeRow row = (AttributeRow) s.getNodeData().getAttributes();
+            s.setAttribute((Column) eigenCol, centralities[i]);
             if (isCanceled) {
                 return;
             }

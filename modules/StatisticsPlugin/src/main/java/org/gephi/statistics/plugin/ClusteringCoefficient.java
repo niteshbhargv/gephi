@@ -47,6 +47,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import org.gephi.attribute.api.Column;
 import org.gephi.statistics.spi.Statistics;
 import org.gephi.graph.api.Node;
 import org.gephi.data.attributes.api.AttributeTable;
@@ -268,10 +269,10 @@ public class ClusteringCoefficient implements Statistics, LongTask {
         for (int v = 0; v < N; v++) {
             if (network[v].length() > 1) {
                 AttributeRow row;
-                row = (AttributeRow)network[v].node.getAttributes();
-                row.setValue(clusteringCol, nodeClustering[v]);
+               // row = (AttributeRow)network[v].node.getAttributes();
+                network[v].node.setAttribute((Column) clusteringCol, nodeClustering[v]);
                 if(!isDirected)
-                    row.setValue(triCount, triangles[v]);
+                   network[v].node.setAttribute((Column)triCount, triangles[v]);
             }
         }
     }
@@ -390,7 +391,7 @@ public class ClusteringCoefficient implements Statistics, LongTask {
                 }
             } else {
                 for (Edge in : ((DirectedGraph) hgraph).getInEdges(node)) {
-                    Node neighbor = in.getSource().getLayoutData().getNode(hgraph.getView().getViewId());
+                    Node neighbor = in.getSource().getNodeData().getNode(hgraph.getView().getViewId());
                     neighborTable.put(neighbor, new EdgeWrapper(1, network[indicies.get(neighbor)]));
                 }
 

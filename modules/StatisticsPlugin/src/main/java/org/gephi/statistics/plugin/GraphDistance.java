@@ -49,6 +49,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Stack;
+import org.gephi.attribute.api.Column;
 import org.gephi.data.attributes.api.AttributeTable;
 import org.gephi.data.attributes.api.AttributeColumn;
 import org.gephi.data.attributes.api.AttributeModel;
@@ -259,7 +260,7 @@ public class GraphDistance implements Statistics, LongTask {
         avgDist /= shortestPaths;//mN * (mN - 1.0f);
 
         for (Node s : hgraph.getNodes()) {
-            AttributeRow row = (AttributeRow) s.getNodeData().getAttributes();
+          //  AttributeRow row = (AttributeRow) s.getNodeData().getAttributes();
             int s_index = indicies.get(s);
 
             if (!isDirected) {
@@ -269,9 +270,9 @@ public class GraphDistance implements Statistics, LongTask {
                 closeness[s_index] = (closeness[s_index] == 0) ? 0 : 1.0 / closeness[s_index];
                 betweenness[s_index] /= isDirected ? (N - 1) * (N - 2) : (N - 1) * (N - 2) / 2;
             }
-            row.setValue(eccentricityCol, eccentricity[s_index]);
-            row.setValue(closenessCol, closeness[s_index]);
-            row.setValue(betweenessCol, betweenness[s_index]);
+            s.setAttribute((Column) eccentricityCol, eccentricity[s_index]);
+            s.setAttribute((Column)closenessCol, closeness[s_index]);
+            s.setAttribute((Column)betweenessCol, betweenness[s_index]);
         }
         hgraph.readUnlock();
     }

@@ -46,6 +46,7 @@ import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import org.gephi.attribute.api.Column;
 import org.gephi.data.attributes.api.AttributeColumn;
 import org.gephi.data.attributes.api.AttributeModel;
 import org.gephi.data.attributes.api.AttributeOrigin;
@@ -122,7 +123,7 @@ public class WeightedDegree implements Statistics, LongTask {
         int i = 0;
 
         for (Node n : graph.getNodes()) {
-            AttributeRow row = (AttributeRow) n.getNodeData().getAttributes();
+        //    AttributeRow row = (AttributeRow) n.getNodeData().getAttributes();
             double totalWeight = 0;
             if (isDirected) {
                // DirectedGraph hdg = graph.getGraphModel().getHierarchicalDirectedGraph(); // hdg not being used anywhere
@@ -130,16 +131,16 @@ public class WeightedDegree implements Statistics, LongTask {
                 double totalOutWeight = 0;
                 for (Iterator it = graph.getEdges(n).iterator(); it.hasNext();) {
                     Edge e = (Edge) it.next();
-                    if (e.getSource().getNodeData().equals(n.getNodeData())) {
+                    if (e.getSource().getAttributes().equals(n.getAttributes())) {
                         totalOutWeight += e.getWeight();
                     }
-                    if (e.getTarget().getNodeData().equals(n.getNodeData())) {
+                    if (e.getTarget().getAttributes().equals(n.getAttributes())) {
                         totalInWeight += e.getWeight();
                     }
                 }
                 totalWeight = totalInWeight + totalOutWeight;
-                row.setValue(inCol, totalInWeight);
-                row.setValue(outCol, totalOutWeight);
+                n.setAttribute((Column) inCol, totalInWeight);
+                n.setAttribute((Column)outCol, totalOutWeight);
                 if (!inDegreeDist.containsKey(totalInWeight)) {
                     inDegreeDist.put(totalInWeight, 0);
                 }
@@ -155,7 +156,7 @@ public class WeightedDegree implements Statistics, LongTask {
                 }
             }
 
-            row.setValue(degCol, totalWeight);
+            n.setAttribute((Column)degCol, totalWeight);
             avgWDegree += totalWeight;
 
             if (!degreeDist.containsKey(totalWeight)) {

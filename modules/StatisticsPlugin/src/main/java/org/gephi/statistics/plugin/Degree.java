@@ -45,6 +45,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
+import org.gephi.attribute.api.Column;
 import org.gephi.data.attributes.api.AttributeTable;
 import org.gephi.data.attributes.api.AttributeColumn;
 import org.gephi.data.attributes.api.AttributeModel;
@@ -139,16 +140,16 @@ public class Degree implements Statistics, LongTask {
         
         DirectedGraph directedGraph = null;
         if(isDirected) {
-             directedGraph = graph.getGraphModel().getDirectedGraphVisible();
+             directedGraph = graph.getView().getGraphModel().getDirectedGraphVisible();
         }
 
         for (Node n : graph.getNodes()) {
-            AttributeRow row = (AttributeRow) n.getNodeData().getAttributes();
+           // AttributeRow row = (AttributeRow) n.getNodeData().getAttributes();
             if (isDirected) {
-                int inDegree = directedGraph.getTotalInDegree(n);
-                int outDegree = directedGraph.getTotalOutDegree(n);
-                row.setValue(inCol, inDegree);
-                row.setValue(outCol, outDegree);
+                int inDegree = directedGraph.getInDegree(n);
+                int outDegree = directedGraph.getOutDegree(n);
+                n.setAttribute((Column) inCol, inDegree);
+                n.setAttribute((Column) outCol, outDegree);
                 if (!inDegreeDist.containsKey(inDegree)) {
                     inDegreeDist.put(inDegree, 0);
                 }
@@ -158,8 +159,8 @@ public class Degree implements Statistics, LongTask {
                 }
                 outDegreeDist.put(outDegree, outDegreeDist.get(outDegree) + 1);
             }
-            int degree = graph.getTotalDegree(n);
-            row.setValue(degCol, degree);
+            int degree = graph.getDegree(n);
+            n.setAttribute((Column) degCol, degree);
             avgDegree += degree;
             if (!degreeDist.containsKey(degree)) {
                 degreeDist.put(degree, 0);
